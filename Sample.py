@@ -8,7 +8,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage
+    MessageEvent, TextMessage, StickerMessage, TextSendMessage, ImageSendMessage
 )
 
 app = Flask(__name__)
@@ -49,7 +49,14 @@ def handle_message(event):
         event.reply_token,
         TextSendMessage(text=event.message.text))
 
-
+@handler.add(MessageEvent, message=StickerMessage)
+def handle_message(event):
+    message=ImageSendMessage(
+        original_content_url='https://example.com/original.jpg',
+        preview_image_url='https://example.com/preview.jpg'
+    )
+    line_bot_api.reply_message(event.reply_token, message)
+    
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     # Setting host='0.0.0.0' will make Flask available from the network
